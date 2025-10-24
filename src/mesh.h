@@ -34,6 +34,7 @@ struct Vertex {
 enum TextureType {
     DIFFUSE,
     SPECULAR,
+    METALLIC,
     AO,
     ROUGHNESS,
     NORMAL,
@@ -43,6 +44,7 @@ inline const char* TextureTypeToString(TextureType type) {
     switch (type) {
         case DIFFUSE: return "DIFFUSE";
         case SPECULAR: return "SPECULAR";
+        case METALLIC: return "METALLIC";
         case AO: return "AO";
         case ROUGHNESS: return "ROUGHNESS";
         case NORMAL: return "NORMAL";

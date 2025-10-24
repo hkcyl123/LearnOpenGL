@@ -30,6 +30,9 @@ bool firstMouse = true;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
+string rootPath = "/Users/huangkaicheng/CLionProjects/openGL";
+string modelPath = rootPath + "/model";
+
 
 unsigned int loadCubemap(vector<std::string> faces)
 {
@@ -111,34 +114,39 @@ int main()
 
     // build and compile shaders
     // -------------------------
-    Shader model_backpack_Shader("/Users/huangkaicheng/CLionProjects/openGL/shader/shader.vs", "/Users/huangkaicheng/CLionProjects/openGL/shader/shader.fs");
-    Shader skyboxShader("/Users/huangkaicheng/CLionProjects/openGL/shader/skybox_shader.vs", "/Users/huangkaicheng/CLionProjects/openGL/shader/skybox_shader.fs");
-    Shader lightShader("/Users/huangkaicheng/CLionProjects/openGL/shader/light.vs", "/Users/huangkaicheng/CLionProjects/openGL/shader/light.fs");
+    // Shader model_backpack_Shader(((rootPath + "/shader/shader.vs").c_str()), ((rootPath + "/shader/shader.fs").c_str()));
+    Shader skyboxShader(((rootPath + "/shader/skybox_shader.vs").c_str()), ((rootPath + "/shader/skybox_shader.fs").c_str()));
+    // Shader dragon_shader(((rootPath + "/shader/dragon.vs").c_str()), ((rootPath + "/shader/dragon.fs").c_str()));
+    Shader gooch_dragon_shader(((rootPath + "/shader/rtr4/ShadingBasics/gooch/gooch_dragon.vs").c_str()), ((rootPath + "/shader/rtr4/ShadingBasics/gooch/gooch_dragon.fs").c_str()));
     // load models
     // -----------
     vector<TextureFileMap> textures_file_maps;
+
+
     // textures_file_maps.push_back(TextureFileMap("1001_albedo.jpg", DIFFUSE));
     // textures_file_maps.push_back(TextureFileMap("1001_AO.jpg", AO));
-    // textures_file_maps.push_back(TextureFileMap("1001_normal.jpg", NORMAL));
+    // textures_file_maps.push_back(TextureFileMap("1001_normal.png", NORMAL));
     // textures_file_maps.push_back(TextureFileMap("1001_roughness.jpg", ROUGHNESS));
-    // textures_file_maps.push_back(TextureFileMap("1001_metallic.jpg", SPECULAR));
-    // Model ourModel("/Users/huangkaicheng/CLionProjects/openGL/Survival_BackPack_2/Survival_BackPack_2.fbx", textures_file_maps);
+    // textures_file_maps.push_back(TextureFileMap("1001_metallic.jpg", METALLIC));
+    // Model ourModel(modelPath + "/survival-guitar-backpack/Untitled.obj", textures_file_maps);
 
-    textures_file_maps.push_back(TextureFileMap("diffuse.jpg", DIFFUSE));
-    textures_file_maps.push_back(TextureFileMap("ao.jpg", AO));
-    textures_file_maps.push_back(TextureFileMap("normal.jpg", NORMAL));
-    textures_file_maps.push_back(TextureFileMap("roughness.jpg", ROUGHNESS));
-    textures_file_maps.push_back(TextureFileMap("specular.jpg", SPECULAR));
-    Model ourModel("/Users/huangkaicheng/CLionProjects/openGL/backpack/backpack.obj", textures_file_maps);
+    // textures_file_maps.push_back(TextureFileMap("diffuse.jpg", DIFFUSE));
+    // textures_file_maps.push_back(TextureFileMap("ao.jpg", AO));
+    // textures_file_maps.push_back(TextureFileMap("normal.png", NORMAL));
+    // textures_file_maps.push_back(TextureFileMap("roughness.jpg", ROUGHNESS));
+    // textures_file_maps.push_back(TextureFileMap("specular.jpg", SPECULAR));
+    // Model ourModel(modelPath + "/backpack/backpack.obj", textures_file_maps);
+
+    Model ourModel(rootPath + "/model/standFord_dragon/dragon.obj", textures_file_maps);
 
     vector<std::string> faces
         {
-            "/Users/huangkaicheng/CLionProjects/openGL/skybox/right.jpg",
-            "/Users/huangkaicheng/CLionProjects/openGL/skybox/left.jpg",
-            "/Users/huangkaicheng/CLionProjects/openGL/skybox/bottom.jpg",
-            "/Users/huangkaicheng/CLionProjects/openGL/skybox/top.jpg",
-            "/Users/huangkaicheng/CLionProjects/openGL/skybox/front.jpg",
-            "/Users/huangkaicheng/CLionProjects/openGL/skybox/back.jpg"
+            rootPath + "/skybox/right.jpg",
+            rootPath + "/skybox/left.jpg",
+            rootPath + "/skybox/bottom.jpg",
+            rootPath + "/skybox/top.jpg",
+            rootPath + "/skybox/front.jpg",
+            rootPath + "/skybox/back.jpg"
         };
     unsigned int cubemapTexture = loadCubemap(faces);
 
@@ -222,21 +230,28 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // don't forget to enable shader before setting uniforms
-        model_backpack_Shader.use();
+        gooch_dragon_shader.use();
 
         // view/projection transformations
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();
-        model_backpack_Shader.setMat4("projection", projection);
-        model_backpack_Shader.setMat4("view", view);
+        gooch_dragon_shader.setMat4("projection", projection);
+        gooch_dragon_shader.setMat4("view", view);
+
 
         // render the loaded model
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
         model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
-        model_backpack_Shader.setMat4("model", model);
+        gooch_dragon_shader.setMat4("model", model);
 
-        ourModel.Draw(model_backpack_Shader);
+        // 方向光，光照，电光源
+        // dragon_shader.setVec3("light_position", camera.GetPosition());
+        gooch_dragon_shader.setVec3("lightPositions", glm::vec3(2.0f, 0.0f, 0.0f));
+        gooch_dragon_shader.setVec3("lightColors", glm::vec3(1.0f, 1.0f, 1.0f));
+        gooch_dragon_shader.setVec3("camPos", camera.Position);
+
+        ourModel.Draw(gooch_dragon_shader);
 
 
         // draw skybox as last

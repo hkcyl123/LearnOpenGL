@@ -42,11 +42,6 @@ public:
     Model(string const &path, vector<TextureFileMap> &texture_file_map, bool gamma = false) : gammaCorrection(gamma)
     {
         loadModel(path, texture_file_map);
-        for (unsigned int i = 0; i < textures_loaded.size(); i++) {
-            std::cout << textures_loaded[i].path <<  textures_loaded[i].type << std::endl;
-        }
-
-        // std::cout << meshes;
     }
 
     // draws the model, and thus all its meshes
