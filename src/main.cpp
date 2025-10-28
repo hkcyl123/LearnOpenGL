@@ -117,7 +117,8 @@ int main()
     // Shader model_backpack_Shader(((rootPath + "/shader/shader.vs").c_str()), ((rootPath + "/shader/shader.fs").c_str()));
     Shader skyboxShader(((rootPath + "/shader/skybox_shader.vs").c_str()), ((rootPath + "/shader/skybox_shader.fs").c_str()));
     // Shader dragon_shader(((rootPath + "/shader/dragon.vs").c_str()), ((rootPath + "/shader/dragon.fs").c_str()));
-    Shader gooch_dragon_shader(((rootPath + "/shader/rtr4/ShadingBasics/gooch/gooch_dragon.vs").c_str()), ((rootPath + "/shader/rtr4/ShadingBasics/gooch/gooch_dragon.fs").c_str()));
+    // Shader gooch_dragon_shader(((rootPath + "/shader/rtr4/ShadingBasics/gooch/gooch_dragon.vs").c_str()), ((rootPath + "/shader/rtr4/ShadingBasics/gooch/gooch_dragon.fs").c_str()));
+    Shader bp_dragon_shader(((rootPath + "/shader/rtr4/ShadingBasics/blinnPhongReflectance/vs.glsl").c_str()), ((rootPath + "/shader/rtr4/ShadingBasics/blinnPhongReflectance/fs.glsl").c_str()));
     // load models
     // -----------
     vector<TextureFileMap> textures_file_maps;
@@ -230,28 +231,28 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // don't forget to enable shader before setting uniforms
-        gooch_dragon_shader.use();
+        bp_dragon_shader.use();
 
         // view/projection transformations
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();
-        gooch_dragon_shader.setMat4("projection", projection);
-        gooch_dragon_shader.setMat4("view", view);
+        bp_dragon_shader.setMat4("projection", projection);
+        bp_dragon_shader.setMat4("view", view);
 
 
         // render the loaded model
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
         model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
-        gooch_dragon_shader.setMat4("model", model);
+        bp_dragon_shader.setMat4("model", model);
 
         // 方向光，光照，电光源
         // dragon_shader.setVec3("light_position", camera.GetPosition());
-        gooch_dragon_shader.setVec3("lightPositions", glm::vec3(2.0f, 0.0f, 0.0f));
-        gooch_dragon_shader.setVec3("lightColors", glm::vec3(1.0f, 1.0f, 1.0f));
-        gooch_dragon_shader.setVec3("camPos", camera.Position);
+        bp_dragon_shader.setVec3("lightPositions", glm::vec3(2.0f, 0.0f, 0.0f));
+        bp_dragon_shader.setVec3("lightColors", glm::vec3(1.0f, 1.0f, 1.0f));
+        bp_dragon_shader.setVec3("camPos", camera.Position);
 
-        ourModel.Draw(gooch_dragon_shader);
+        ourModel.Draw(bp_dragon_shader);
 
 
         // draw skybox as last
